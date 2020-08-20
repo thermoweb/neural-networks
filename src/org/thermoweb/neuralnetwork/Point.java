@@ -5,11 +5,6 @@ public class Point {
     private final float y;
     private boolean guessedRight;
 
-    public Point(float x, float y, boolean guessedRight) {
-        this(x, y);
-        this.guessedRight = guessedRight;
-    }
-
     public Point(float x, float y) {
         this.x = x;
         this.y = y;

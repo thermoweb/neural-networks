@@ -21,9 +21,9 @@ public class NeuralNetworks {
 
     public NeuralNetworks() {
         perceptron = new Perceptron();
-        float a = random.nextFloat() * 2 - 1;
-        float b = random.nextFloat() * 2 - 1;
-        functionToIdentify = (x) -> (float) (a * x + b);
+        float randomSlope = random.nextFloat() * 2 - 1;
+        float randomIntercept = random.nextFloat() * 2 - 1;
+        functionToIdentify = (x) -> (float) (randomSlope * x + randomIntercept);
     }
 
     public static void main(String[] args) {
@@ -87,14 +87,10 @@ public class NeuralNetworks {
 
     private static void waitWithoutErrors() {
         try {
-            Thread.sleep(1);
+            Thread.sleep(2);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    private void addPoint(Point point, int value) {
-        points.put(point, value);
     }
 
     public static int getTarget(Point point, DoubleUnaryOperator function) {
