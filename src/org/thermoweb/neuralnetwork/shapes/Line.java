@@ -6,12 +6,12 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 
-import static org.thermoweb.neuralnetwork.NeuralNetworks.HEIGHT;
-import static org.thermoweb.neuralnetwork.NeuralNetworks.WIDTH;
 import static org.thermoweb.neuralnetwork.NeuralNetworks.getPixelX;
 import static org.thermoweb.neuralnetwork.NeuralNetworks.getPixelY;
+import static org.thermoweb.neuralnetwork.visualization.NeuralNetworkPanel.WIDTH;
+import static org.thermoweb.neuralnetwork.visualization.NeuralNetworkPanel.HEIGHT;
 
-public class Line {
+public class Line implements Shape {
     Point pointA;
     Point pointB;
 
@@ -20,12 +20,13 @@ public class Line {
         this.pointB = pointB;
     }
 
+    @Override
     public void draw(Graphics g) {
         Line2D.Float line = new Line2D.Float(
                 getPixelX(this.pointA.getX(), WIDTH),
                 getPixelY(this.pointA.getY(), HEIGHT),
                 getPixelX(this.pointB.getX(), WIDTH),
                 getPixelY(this.pointB.getY(), HEIGHT));
-        ((Graphics2D) g).draw((Line2D) line);
+        ((Graphics2D) g).draw(line);
     }
 }

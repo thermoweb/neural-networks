@@ -1,74 +1,119 @@
 package org.thermoweb.neuralnetwork;
 
-import org.thermoweb.neuralnetwork.shapes.Circle;
 import org.thermoweb.neuralnetwork.shapes.Line;
+import org.thermoweb.neuralnetwork.visualization.NeuralNetworkWindow;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.geom.Line2D;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.function.DoubleUnaryOperator;
 
-public class NeuralNetworks extends JPanel {
-    public static final int WIDTH = 800;
-    public static final int HEIGHT = 800;
+public class NeuralNetworks {
 
-    private final List<Object> shapes = new ArrayList<>();
-    private final List<Point> points = new ArrayList<>();
+    private final Map<Point, Integer> points = new HashMap<>();
+    private static final Random random = new Random();
 
     private final Perceptron perceptron;
+    private final DoubleUnaryOperator functionToIdentify;
+
+    private Line lineToGuess;
+    private Line guessedLine;
 
     public NeuralNetworks() {
-        this(200);
-    }
-
-    public NeuralNetworks(int amount) {
         perceptron = new Perceptron();
-
-        shapes.add(new Line(new Point(-1, function(-1)), new Point(1, function(1))));
-
-        setBackground(Color.WHITE);
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        for(int i=0; i < amount;i++) {
-            Point point = new RandomPoint();
-            points.add(point);
-            shapes.add(new Circle(point, WIDTH, HEIGHT));
-            int guess = perceptron.guess(point);
-            System.out.printf("guess point[%f,%f] = %d%n", point.getX(), point.getY(), guess);
-        }
-        repaint();
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        for (Object s : shapes) {
-            if (s instanceof Circle) {
-                ((Circle) s).draw(g);
-            } else if (s instanceof Line) {
-                ((Line) s).draw(g);
-            }
-        }
+        float a = random.nextFloat() * 2 - 1;
+        float b = random.nextFloat() * 2 - 1;
+        functionToIdentify = (x) -> (float) (a * x + b);
     }
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.add(new NeuralNetworks());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        NeuralNetworks neuralNetwork = new NeuralNetworks();
+        NeuralNetworkWindow neuralNetworkWindow = new NeuralNetworkWindow(neuralNetwork);
+        DoubleUnaryOperator function = neuralNetwork.getFunctionToIdentify();
+
+        neuralNetwork.setLineToGuess(getLineToGuess(function));
+
+        int numberOfPoints = 200;
+        Map<Point, Integer> data = createRandomData(function, numberOfPoints);
+        neuralNetwork.getPoints().putAll(data);
+
+        neuralNetwork.setGuessedLine(getLineFromWeights(neuralNetwork.getPerceptron().getWeights()));
+        neuralNetworkWindow.getNeuralNetworkPanel().repaint();
+
+        Trainer trainer = new Trainer(neuralNetwork.getPerceptron(), neuralNetwork.getPoints(), (float) 0.001);
+
+        System.out.println("start training");
+        boolean isPerceptronTrainedWell;
+        do {
+            trainer.train();
+            isPerceptronTrainedWell = isPerceptronTrainedWell(neuralNetwork);
+            neuralNetworkWindow.getNeuralNetworkPanel().repaint();
+        } while(!isPerceptronTrainedWell);
+
+        System.out.println("Training ends");
     }
 
-    public float function(float x) {
-        return (float) (-0.2 * x + 0.3);
+    private static Map<Point, Integer> createRandomData(DoubleUnaryOperator function, int numberOfPoints) {
+        Map<Point, Integer> data = new HashMap<>();
+        for(int i = 0; i < numberOfPoints; i++) {
+            Point point = new RandomPoint();
+            data.put(point, getTarget(point, function));
+        }
+        return data;
     }
 
+    private static boolean isPerceptronTrainedWell(NeuralNetworks neuralNetwork) {
+        boolean alwaysRight = true;
+        for (Map.Entry<Point, Integer> entry : neuralNetwork.getPoints().entrySet()) {
+            Point point = entry.getKey();
+            Integer target = entry.getValue();
+            int guess = neuralNetwork.getPerceptron().guess(point);
+            boolean isRight = guess == target;
+            point.setGuessedRight(isRight);
+            neuralNetwork.setGuessedLine(getLineFromWeights(neuralNetwork.getPerceptron().getWeights()));
+            if (!isRight) {
+                alwaysRight = false;
+            }
+            waitWithoutErrors();
+        }
+        return alwaysRight;
+    }
 
+    private static Line getLineToGuess(DoubleUnaryOperator function) {
+        return new Line(
+                new Point(-1, (float) function.applyAsDouble(-1)),
+                new Point(1, (float) function.applyAsDouble(1)));
+    }
+
+    private static void waitWithoutErrors() {
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addPoint(Point point, int value) {
+        points.put(point, value);
+    }
+
+    public static int getTarget(Point point, DoubleUnaryOperator function) {
+        float minY = (float) function.applyAsDouble(point.getX());
+        if (minY < point.getY()) {
+            return 1;
+        }
+        return - 1;
+    }
+
+    public static Line getLineFromWeights(float[] weights) {
+        Point pointA = new Point(-1, getYFromWeights(-1, weights));
+        Point pointB = new Point(1, getYFromWeights(1, weights));
+        return new Line(pointA, pointB);
+    }
+
+    public static float getYFromWeights(float x, float[] weights) {
+        return ((- weights[0] * x) - weights[2]) / weights[1];
+    }
 
     public static int getPixelX(float x, int max) {
         return (int) (x * max + max)/2;
@@ -76,5 +121,33 @@ public class NeuralNetworks extends JPanel {
 
     public static int getPixelY(float x, int max) {
         return (int) (-x * max + max)/2;
+    }
+
+    public DoubleUnaryOperator getFunctionToIdentify() {
+        return functionToIdentify;
+    }
+
+    public Perceptron getPerceptron() {
+        return perceptron;
+    }
+
+    public Map<Point, Integer> getPoints() {
+        return points;
+    }
+
+    public Line getLineToGuess() {
+        return lineToGuess;
+    }
+
+    public Line getGuessedLine() {
+        return guessedLine;
+    }
+
+    public void setLineToGuess(Line lineToGuess) {
+        this.lineToGuess = lineToGuess;
+    }
+
+    public void setGuessedLine(Line guessedLine) {
+        this.guessedLine = guessedLine;
     }
 }

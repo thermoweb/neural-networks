@@ -5,8 +5,7 @@ import java.util.Random;
 public class Perceptron {
     private static final Random random = new Random();
 
-    float[] weights = new float[3];
-    float learningRate = (float) 0.1;
+    private final float[] weights = new float[3];
 
     public Perceptron() {
         for (int i = 0; i < weights.length; i++) {
@@ -27,12 +26,16 @@ public class Perceptron {
         return 1;
     }
 
-    private float[] getInputsFromPoint(Point point) {
+    public static float[] getInputsFromPoint(Point point) {
         float[] inputs = new float[3];
         inputs[0] = point.getX();
         inputs[1] = point.getY();
         inputs[2] = (float) 1;
 
         return inputs;
+    }
+
+    public float[] getWeights() {
+        return weights;
     }
 }

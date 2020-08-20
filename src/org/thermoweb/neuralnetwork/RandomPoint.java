@@ -1,7 +1,5 @@
 package org.thermoweb.neuralnetwork;
 
-import org.thermoweb.neuralnetwork.Point;
-
 import java.util.Random;
 
 public class RandomPoint extends Point {
