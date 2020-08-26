@@ -7,8 +7,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 
-import static org.thermoweb.neuralnetwork.NeuralNetworks.getPixelX;
-import static org.thermoweb.neuralnetwork.NeuralNetworks.getPixelY;
+import static org.thermoweb.neuralnetwork.NeuralNetworkApplication.getPixelX;
+import static org.thermoweb.neuralnetwork.NeuralNetworkApplication.getPixelY;
 
 public class Circle implements Shape {
     int x;

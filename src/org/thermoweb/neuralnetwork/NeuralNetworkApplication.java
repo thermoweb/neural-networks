@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.DoubleUnaryOperator;
 
-public class NeuralNetworks {
+public class NeuralNetworkApplication {
 
     private final Map<Point, Integer> points = new HashMap<>();
     private static final Random random = new Random();
@@ -19,7 +19,7 @@ public class NeuralNetworks {
     private Line lineToGuess;
     private Line guessedLine;
 
-    public NeuralNetworks() {
+    public NeuralNetworkApplication() {
         perceptron = new Perceptron();
         float randomSlope = random.nextFloat() * 2 - 1;
         float randomIntercept = random.nextFloat() * 2 - 1;
@@ -27,7 +27,7 @@ public class NeuralNetworks {
     }
 
     public static void main(String[] args) {
-        NeuralNetworks neuralNetwork = new NeuralNetworks();
+        NeuralNetworkApplication neuralNetwork = new NeuralNetworkApplication();
         NeuralNetworkWindow neuralNetworkWindow = new NeuralNetworkWindow(neuralNetwork);
         DoubleUnaryOperator function = neuralNetwork.getFunctionToIdentify();
 
@@ -62,7 +62,7 @@ public class NeuralNetworks {
         return data;
     }
 
-    private static boolean isPerceptronTrainedWell(NeuralNetworks neuralNetwork) {
+    private static boolean isPerceptronTrainedWell(NeuralNetworkApplication neuralNetwork) {
         boolean alwaysRight = true;
         for (Map.Entry<Point, Integer> entry : neuralNetwork.getPoints().entrySet()) {
             Point point = entry.getKey();

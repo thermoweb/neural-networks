@@ -1,6 +1,6 @@
 package org.thermoweb.neuralnetwork.visualization;
 
-import org.thermoweb.neuralnetwork.NeuralNetworks;
+import org.thermoweb.neuralnetwork.NeuralNetworkApplication;
 import org.thermoweb.neuralnetwork.shapes.Circle;
 
 import javax.swing.JPanel;
@@ -13,9 +13,9 @@ public class NeuralNetworkPanel extends JPanel {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
 
-    private final NeuralNetworks neuralNetworks;
+    private final NeuralNetworkApplication neuralNetworks;
 
-    public NeuralNetworkPanel(NeuralNetworks neuralNetworks) {
+    public NeuralNetworkPanel(NeuralNetworkApplication neuralNetworks) {
         this.neuralNetworks = neuralNetworks;
         setBackground(Color.WHITE);
         setPreferredSize(new Dimension(WIDTH, HEIGHT));

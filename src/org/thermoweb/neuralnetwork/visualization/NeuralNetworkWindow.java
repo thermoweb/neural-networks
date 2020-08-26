@@ -1,7 +1,6 @@
 package org.thermoweb.neuralnetwork.visualization;
 
-import org.thermoweb.neuralnetwork.NeuralNetworks;
-import org.thermoweb.neuralnetwork.Point;
+import org.thermoweb.neuralnetwork.NeuralNetworkApplication;
 
 import javax.swing.JFrame;
 
@@ -9,7 +8,7 @@ public class NeuralNetworkWindow extends JFrame {
 
     private final NeuralNetworkPanel neuralNetworkPanel;
 
-    public NeuralNetworkWindow(NeuralNetworks neuralNetworks) {
+    public NeuralNetworkWindow(NeuralNetworkApplication neuralNetworks) {
         super();
         this.neuralNetworkPanel = new NeuralNetworkPanel(neuralNetworks);
         this.setContentPane(neuralNetworkPanel);

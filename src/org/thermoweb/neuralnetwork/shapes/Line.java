@@ -6,8 +6,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 
-import static org.thermoweb.neuralnetwork.NeuralNetworks.getPixelX;
-import static org.thermoweb.neuralnetwork.NeuralNetworks.getPixelY;
+import static org.thermoweb.neuralnetwork.NeuralNetworkApplication.getPixelX;
+import static org.thermoweb.neuralnetwork.NeuralNetworkApplication.getPixelY;
 import static org.thermoweb.neuralnetwork.visualization.NeuralNetworkPanel.WIDTH;
 import static org.thermoweb.neuralnetwork.visualization.NeuralNetworkPanel.HEIGHT;
 
